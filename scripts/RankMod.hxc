@@ -15,18 +15,12 @@ class RankMod extends Module {
     var padding = 10;
     var previousrank = "";
     
-
     var background:FlxSprite;
-    var canadd = false;
 
     var totalNotes:Int = 0;
-    var totalNotesHit:Int = 0;
     
     function new (){
         super("Rank Mod");
-
-
-
     }
 
 
@@ -37,15 +31,8 @@ class RankMod extends Module {
             {
                 if (event.note.noteData.getMustHitNote())
                 {
-                    // debugtext.text = getRank();
                     totalNotes++;
-                    totalNotesHit++;
-                    
-                    debugtext.text = "Total Notes: " + totalNotes + "\nTotal Notes Hit: " + totalNotesHit + "\n" + Highscore.tallies.totalNotes + "\n" + Highscore.tallies.totalNotesHit;
                     updateRankIcon();
-
-                    // rank.setPosition(FlxG.width - (rank.width + 10), 10);
-                    // debugtext.text = getRank();
                 }
         
             }
@@ -53,33 +40,11 @@ class RankMod extends Module {
     }
 
     override function onNoteMiss(event)
-        {
-            super.onNoteMiss(event);
-
-            totalNotes++;
-            debugtext.text = "Total Notes: " + totalNotes + "\nTotal Notes Hit: " + totalNotesHit + "\n" + Highscore.tallies.totalNotes + "\n" + Highscore.tallies.totalNotesHit;
-            updateRankIcon();
-
-            // rank.setPosition(FlxG.width - (rank.width + 10), 10);
-
-            // debugtext.text = getRank();
-
-        }
-
-    override function onGameOver(event)
     {
-        super.onGameOver(event);
-        PlayState.instance.remove(rank);
-        PlayState.instance.remove(background);
+        super.onNoteMiss(event);
+        totalNotes++;
+        updateRankIcon();
     }
-
-    override function onSongRetry(event)
-    {
-        super.onSongRetry(event);
-        PlayState.instance.remove(rank);
-        PlayState.instance.remove(background);
-    }
-
 
     override function onCountdownStart(event)
     {
@@ -99,28 +64,26 @@ class RankMod extends Module {
         rank.animation.addByPrefix("SHIT", "LOSS rank0005", 24, false);
         rank.cameras = [PlayState.instance.camHUD];
 
-        switch (FlxG.save.data.rankpos)
-        {
-            case "Top-Right":
-                rank.setPosition(FlxG.width - (rank.width + padding), padding);
-            case "Top-Left":
-                rank.setPosition(padding, padding);
-            case "Bottom-Right":
-                rank.setPosition(FlxG.width - (rank.width + padding), FlxG.height - (rank.height + padding));
-            case "Bottom-Left":
-                rank.setPosition(padding, FlxG.height - (rank.height + padding));
-            default:
-                rank.setPosition(FlxG.width - (rank.width + padding), padding);
-
-
-        }
 
 
         background = new FlxSprite(rank.x, rank.y - padding);
         background.makeGraphic(rank.width + padding, rank.height + padding, 0xFF000000);
         background.alpha = 0.5;
         background.cameras = [PlayState.instance.camHUD];
-
+        
+        switch (FlxG.save.data.rankpos)
+        {
+            // case "Top-Right":
+            //     rank.setPosition(FlxG.width - (rank.width + padding), padding);
+            // case "Top-Left":
+            //     rank.setPosition(padding, padding);
+            // case "Bottom-Right":
+            //     rank.setPosition(FlxG.width - (rank.width + padding), FlxG.height - (rank.height + padding));
+            // case "Bottom-Left":
+            //     rank.setPosition(padding, FlxG.height - (rank.height + padding));
+            // default:
+        }
+        rank.setPosition(FlxG.width - (rank.width + padding), padding);
         
 
         rank.animation.play(getRank(), true, false);
@@ -178,7 +141,7 @@ class RankMod extends Module {
         
         // Final Grade = (Sick + Good - Miss) / (Total Notes)
         
-        var grade = (Highscore.tallies.sick + Highscore.tallies.good - Highscore.tallies.missed) /  Highscore.tallies.totalNotesHit;
+        var grade = (Highscore.tallies.sick + Highscore.tallies.good - Highscore.tallies.missed) / totalNotes;
         
         if (grade == Constants.RANK_PERFECT_THRESHOLD)
         {
