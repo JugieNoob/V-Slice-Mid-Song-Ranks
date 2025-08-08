@@ -19,39 +19,38 @@ class RankSprite extends FunkinSprite {
         animation.play("PERFECTGOLD");
     }
 
-    public function playRankAnimation()
+    public function playRankAnimation(animRank)
     {
         switch (FlxG.save.data.rankAnimation)
             {
                 case "Bump":
-                    FlxTween.tween(scale, {x: 1.25, y: 1.25}, 0.05, {
+                    FlxTween.tween(animRank.scale, {x: 1.25, y: 1.25}, 0.05, {
                     onComplete: function(){
-                        FlxTween.tween(scale, {x: 1, y: 1}, 0.05);
+                        FlxTween.tween(animRank.scale, {x: 1, y: 1}, 0.05);
                     }});
                 case "Shake":
-                    FlxTween.tween(rank, {x: rank.x - 5}, 0.05, {
+                    FlxTween.tween(animRank, {x: animRank.x - 5}, 0.05, {
                     onComplete: function(){
-                        FlxTween.tween(rank, {x: rank.x + 10}, 0.025, {
+                        FlxTween.tween(animRank, {x: animRank.x + 10}, 0.025, {
                         onComplete: function(){
-                            FlxTween.tween(rank, {x: rank.x - 5}, 0.05);
+                            FlxTween.tween(animRank, {x: animRank.x - 5}, 0.05);
                         }});
                     }});
                 case "Jump":
-                    FlxTween.tween(rank, {y: rank.y - 5}, 0.05, {
+                    FlxTween.tween(animRank, {y: animRank.y - 5}, 0.05, {
                     onComplete: function(){
-                        FlxTween.tween(rank, {y: rank.y + 5}, 0.025);
+                        FlxTween.tween(animRank, {y: animRank.y + 5}, 0.025);
                     }});
                 case "Tilt":
-                    FlxTween.tween(rank, {angle: rank.angle - 5}, 0.05, {
+                    FlxTween.tween(animRank, {angle: animRank.angle - 5}, 0.05, {
                     onComplete: function(){
-                    FlxTween.tween(rank, {angle: rank.angle + 10}, 0.025, {
+                    FlxTween.tween(animRank, {angle: animRank.angle + 10}, 0.025, {
                     onComplete: function(){
-                        FlxTween.tween(rank, {angle: rank.angle - 5}, 0.05);
+                        FlxTween.tween(animRank, {angle: animRank.angle - 5}, 0.05);
                         }});
                     }});
             
             }
+    
     }
-
-
 }

@@ -103,11 +103,13 @@ class RankMod extends Module {
 
         if (previousRank != getRank())
         {
-            rank.playRankAnimation();
+            rank.playRankAnimation(rank);
         }
 
         previousRank = getRank();
     }
+
+   
 
     function updateRankPos()
     {

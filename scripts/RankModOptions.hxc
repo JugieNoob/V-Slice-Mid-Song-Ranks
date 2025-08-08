@@ -130,7 +130,7 @@ class RankModOptions extends Module {
                 if (!playingAnimation)
                 {
                     playingAnimation = true;
-                    rank.playRankAnimation();
+                    rank.playRankAnimation(rank);
                 }
                 else if (playingAnimation && !timer.active)
                 {
