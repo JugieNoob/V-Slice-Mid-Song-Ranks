@@ -2,11 +2,21 @@ import funkin.modding.module.Module;
 import funkin.ui.options.OptionsState;
 import flixel.FlxG;
 import Std;
+import flixel.FlxSprite;
+import flixel.text.FlxText;
+import funkin.ui.options.PreferencesMenu;
 
 
 class RankModOptions extends Module {
 
     var pagename = OptionsState.PageName;
+    var rank:FlxSprite;
+    var currentState;
+
+    var text:FlxText;
+
+    var items;
+    var itemID:Int;
 
     function new (){
         super("Rank Mod Options", 100);
@@ -38,10 +48,22 @@ class RankModOptions extends Module {
     {
         super.onStateChangeEnd(event);
 
+
             if (Std.isOfType(event.targetState, OptionsState))
                 {
-          
+                        currentState = event.targetState;
                         var preferences = event.targetState.optionsCodex.pages.get("preferences");
+
+
+                        text = new FlxText();
+                        OptionsState.instance.add(text);
+
+                        rank = new FlxSprite();
+                        rank.makeGraphic(50, 50);
+                        rank.visible = false;
+                        rank.camera = preferences.menuCamera;
+                        OptionsState.instance.add(rank);
+
         
                         preferences.createPrefItemCheckbox('Show Mid Song Ranks', 'Toggles the mid-song Ranks.', function(value:Bool):Void {
                             FlxG.save.data.showrank = value; }, FlxG.save.data.showrank);
@@ -49,20 +71,57 @@ class RankModOptions extends Module {
                         preferences.createPrefItemEnum('Rank Icon Animation', 'Set which animation should play when a rank changes', ["None" => "None", "Bump" => "Bump", "Shake" => "Shake", "Jump" => "Jump", "Tilt" => "Tilt",],function(value:Bool):Void {
                             FlxG.save.data.rankAnimation = value;
                         }, FlxG.save.data.rankAnimation);      
+                        
+                        items = preferences.items;
+                        rank.setPosition((FlxG.width - rank.width) - 50, 120 * (items.length - 1) + 30);
+                        itemID = items.length - 1;
+                  
 
                         preferences.createPrefItemPercentage('Rank Background Opacity', "Change the opacity of the Rank Background", function(value:Int){
                             FlxG.save.data.backgroundAlpha = value;
                         }, FlxG.save.data.backgroundAlpha);
+
                             
-                        preferences.createPrefItemEnum('Mid-Song Rank Pos', 'Set the position of the Mid-Song Rank. (Default is top-right)', ["Top Right" => "Top Right", "Top Left" => "Top Left", "Bottom Right" => "Bottom Right", "Bottom Left" => "Bottom Left"],function(value:Bool):Void {
+                        preferences.createPrefItemEnum('Mid Song Rank Pos', 'Set the position of the Mid-Song Rank. (Default is top-right)', ["Top Right" => "Top Right", "Top Left" => "Top Left", "Bottom Right" => "Bottom Right", "Bottom Left" => "Bottom Left"],function(value:Bool):Void {
                             FlxG.save.data.rankPos = value;
                         }, FlxG.save.data.rankPos);      
             
 
                 
                 }
+            else
+            {
+                currentState = null;
+            }
         
       
+    }
+
+    function onUpdate(event)
+    {
+        super.onUpdate(event);
+        if (Std.isOfType(currentState, OptionsState))
+        {
+            if (text != null)
+            {
+                text.text = Std.isOfType(currentState.optionsCodex.currentPage, PreferencesMenu);
+            }
+            if (Std.isOfType(currentState.optionsCodex.currentPage, PreferencesMenu) && !rank.visible)
+            {
+                rank.visible = true;
+            } 
+            else if (!Std.isOfType(currentState.optionsCodex.currentPage, PreferencesMenu) && rank.visible)
+            {
+                rank.visible = false;
+            }
+
+            if (items.selectedIndex == itemID)
+            {
+                text.text = "selected";
+            }
+            
+        }
+     
     }
 
 
