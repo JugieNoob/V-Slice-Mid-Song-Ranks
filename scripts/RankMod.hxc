@@ -74,7 +74,7 @@ class RankMod extends Module {
 
         background = new FlxSprite();
         background.makeGraphic(rank.width + padding, rank.height + padding, 0xFF000000);
-        background.alpha = 0.5;
+        background.alpha = FlxG.save.data.backgroundAlpha / 100;
         background.camera = PlayState.instance.camHUD;
         PlayState.instance.add(background);
         
@@ -95,12 +95,8 @@ class RankMod extends Module {
     
         updateRankPos();
 
-     
-        if (FlxG.save.data.showbackground)
-        {
-            PlayState.instance.add(background);
-        }
-            PlayState.instance.add(rank);
+        PlayState.instance.add(background);
+        PlayState.instance.add(rank);
         
 
 

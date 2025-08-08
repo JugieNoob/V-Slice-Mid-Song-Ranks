@@ -16,9 +16,9 @@ class RankModOptions extends Module {
         {
             FlxG.save.data.showrank = true;
         }
-        if (FlxG.save.data.showbackground == null)
+        if (FlxG.save.data.backgroundAlpha == null)
         {
-            FlxG.save.data.showbackground = true;
+            FlxG.save.data.backgroundAlpha = 50;
         }
         if (FlxG.save.data.rankbump == null)
         {
@@ -41,14 +41,15 @@ class RankModOptions extends Module {
           
                         var preferences = event.targetState.optionsCodex.pages.get("preferences");
         
-                        preferences.createPrefItemCheckbox('Show Mid-Song Ranks', 'Toggles the mid-song ranks.', function(value:Bool):Void {
+                        preferences.createPrefItemCheckbox('Show Mid Song Ranks', 'Toggles the mid-song Ranks.', function(value:Bool):Void {
                             FlxG.save.data.showrank = value; }, FlxG.save.data.showrank);
 
-                        preferences.createPrefItemCheckbox('Bump Mid-Song Rank Icon', 'Toggles bumping the mid-song rank icon bumping when the rank changes.', function(value:Bool):Void {
+                        preferences.createPrefItemCheckbox('Bump Rank Icon', 'Toggles bumping the mid-song rank icon bumping when the rank changes.', function(value:Bool):Void {
                             FlxG.save.data.rankbump = value; }, FlxG.save.data.rankbump);
 
-                        preferences.createPrefItemCheckbox('Show Mid-Song Ranks BG', 'Toggles a background for the mid-song ranks.', function(value:Bool):Void {
-                                FlxG.save.data.showbackground = value; }, FlxG.save.data.showbackground);
+                        preferences.createPrefItemPercentage('Rank Background Opacity', "Change the opacity of the Rank Background", function(value:Int){
+                            FlxG.save.data.backgroundAlpha = value;
+                        }, FlxG.save.data.backgroundAlpha);
                             
                         preferences.createPrefItemEnum('Mid-Song Rank Pos', 'Set the position of the Mid-Song Rank. (Default is top-right)', ["Top Right" => "Top Right", "Top Left" => "Top Left", "Bottom Right" => "Bottom Right", "Bottom Left" => "Bottom Left"],function(value:Bool):Void {
                             FlxG.save.data.rankPos = value;
