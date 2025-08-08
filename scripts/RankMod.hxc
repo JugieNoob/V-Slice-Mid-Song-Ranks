@@ -10,14 +10,13 @@ import flixel.tweens.FlxTween;
 
 class RankMod extends Module {
 
-    var debugtext:FlxText;
     var rank:FunkinSprite;
-    var padding = 10;
-    var previousrank = "";
-    
     var background:FlxSprite;
 
     var totalNotes:Int = 0;
+    var padding:Int = 10;
+    var previousRank:String = "";
+
     
     function new (){
         super("Rank Mod");
@@ -35,8 +34,6 @@ class RankMod extends Module {
                 {
                     totalNotes++;
                     updateRankIcon();
-                    debugtext.text = "Total Notes: " + totalNotes + "\n" + Highscore.tallies.totalNotesHit;
-
                 }
         
             }
@@ -58,7 +55,6 @@ class RankMod extends Module {
         
 
         totalNotes = 0;
-        totalNotesHit = 0;
         rank = new FunkinSprite(400, 200);
         rank.loadSparrow("rankbadges");
 
@@ -68,16 +64,23 @@ class RankMod extends Module {
         rank.animation.addByPrefix("GREAT", "GREAT rank0005", 24, false);
         rank.animation.addByPrefix("GOOD", "GOOD rank0005", 24, false);
         rank.animation.addByPrefix("SHIT", "LOSS rank0005", 24, false);
-        rank.cameras = [PlayState.instance.camHUD];
+        rank.camera = PlayState.instance.camHUD;
+        rank.animation.play(getRank(), true, false);
+        rank.updateHitbox();
 
 
+        previousRank = getRank();
 
-        background = new FlxSprite(rank.x, rank.y - padding);
+
+        background = new FlxSprite();
         background.makeGraphic(rank.width + padding, rank.height + padding, 0xFF000000);
+        background.setPosition(FlxG.width - background.width - 50, 0);
         background.alpha = 0.5;
-        background.cameras = [PlayState.instance.camHUD];
+        background.camera = PlayState.instance.camHUD;
+        PlayState.instance.add(background);
+
         
-        switch (FlxG.save.data.rankpos)
+        switch (FlxG.save.data.rankPos)
         {
             // case "Top-Right":
             //     rank.setPosition(FlxG.width - (rank.width + padding), padding);
@@ -89,11 +92,10 @@ class RankMod extends Module {
             //     rank.setPosition(padding, FlxG.height - (rank.height + padding));
             // default:
         }
-        rank.setPosition(FlxG.width - (rank.width + padding), padding);
-        
 
-        rank.animation.play(getRank(), true, false);
-        previousrank = getRank();
+        // rank.setPosition(FlxG.width - (rank.width + padding), padding);
+
+        updateRankPos();
 
      
             if (FlxG.save.data.showbackground)
@@ -103,22 +105,17 @@ class RankMod extends Module {
             PlayState.instance.add(rank);
         
 
-        debugtext = new FlxText();
-        debugtext.text = "" + FlxG.save.data.rankpos;              
-        debugtext.camera = PlayState.instance.camHUD;
-        debugtext.size = 18;
-        debugtext.updateHitbox();
-        debugtext.setPosition(30, FlxG.height - debugtext.height - 70);
-        debugtext.zIndex = 1000;
-        PlayState.instance.add(debugtext);
+
 
     }
 
     function updateRankIcon()
     {
         rank.animation.play(getRank(), true, false);
+        rank.updateHitbox();
+        updateRankPos();
 
-        if (previousrank != getRank() && FlxG.save.data.rankbump && FlxG.save.data.showrank)
+        if (previousRank != getRank() && FlxG.save.data.rankbump && FlxG.save.data.showrank)
         {
             FlxTween.tween(rank.scale, {x: 1.25, y: 1.25}, 0.05, {
                 onComplete: function(){
@@ -127,17 +124,22 @@ class RankMod extends Module {
             });
         }
 
-        previousrank = getRank();
+        previousRank = getRank();
+    }
+
+    function updateRankPos()
+    {
+        rank.setPosition(background.x + (background.width / 2) - (rank.width / 2), background.y + (background.height / 2) - (rank.height / 2));
     }
 
 
     function getRank()
     {
         // Adapted from FNF Source Code
-        var isPerfectGold = Highscore.tallies.sick ==  Highscore.tallies.totalNotesHit && Highscore.tallies.missed == 0;
+        var isPerfectGold = Highscore.tallies.sick == Highscore.tallies.totalNotesHit && Highscore.tallies.missed == 0;
         if (isPerfectGold)
         {
-            rank.offset.set(0, 0);
+            // rank.offset.set(0, 0);
             return "PERFECTGOLD";
 
         }
@@ -150,27 +152,27 @@ class RankMod extends Module {
         
         if (grade == Constants.RANK_PERFECT_THRESHOLD)
         {
-            rank.offset.set(0, 0);
+            // rank.offset.set(0, 0);
             return "PERFECT";
         }
         else if (grade >= Constants.RANK_EXCELLENT_THRESHOLD)
         {
-            rank.offset.set(-7, 0);
+            // rank.offset.set(-7, 0);
             return "EXCELLENT";
         }
         else if (grade >= Constants.RANK_GREAT_THRESHOLD)
         {
-            rank.offset.set(-4, 0);
+            // rank.offset.set(-4, 0);
             return "GREAT";
         }
         else if (grade >= Constants.RANK_GOOD_THRESHOLD)
         {
-            rank.offset.set(-4, 0);
+            // rank.offset.set(-4, 0);
             return "GOOD";
         }
         else
         {
-            rank.offset.set(-7, 0);
+            // rank.offset.set(-7, 0);
             return "SHIT";
         }
     }

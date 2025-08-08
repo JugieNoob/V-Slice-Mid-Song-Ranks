@@ -25,9 +25,9 @@ class RankModOptions extends Module {
             FlxG.save.data.rankbump == true;
         }
 
-        if (FlxG.save.data.rankpos == null)
+        if (FlxG.save.data.rankPos == null)
             {
-                FlxG.save.data.rankpos == "topright";
+                FlxG.save.data.rankPos == "topright";
             }
     }
 
@@ -50,9 +50,9 @@ class RankModOptions extends Module {
                         preferences.createPrefItemCheckbox('Show Mid-Song Ranks BG', 'Toggles a background for the mid-song ranks.', function(value:Bool):Void {
                                 FlxG.save.data.showbackground = value; }, FlxG.save.data.showbackground);
                             
-                        preferences.createPrefItemEnum('Mid-Song Rank Pos', 'Set the position of the Mid-Song Rank. (Default is top-right)', ["Top-Right" => "Top-Right", "Top-Left" => "Top-Left", "Bottom-Right" => "Bottom-Right", "Bottom-Left" => "Bottom-Left"],function(value:Bool):Void {
-                            FlxG.save.data.rankpos = value;
-                        }, FlxG.save.data.rankpos);      
+                        preferences.createPrefItemEnum('Mid-Song Rank Pos', 'Set the position of the Mid-Song Rank. (Default is top-right)', ["Top Right" => "Top Right", "Top Left" => "Top Left", "Bottom Right" => "Bottom Right", "Bottom Left" => "Bottom Left"],function(value:Bool):Void {
+                            FlxG.save.data.rankPos = value;
+                        }, FlxG.save.data.rankPos);      
             
 
                     
