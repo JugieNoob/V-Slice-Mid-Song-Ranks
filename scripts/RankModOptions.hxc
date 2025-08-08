@@ -26,9 +26,9 @@ class RankModOptions extends Module {
         }
 
         if (FlxG.save.data.rankPos == null)
-            {
-                FlxG.save.data.rankPos == "topright";
-            }
+        {
+            FlxG.save.data.rankPos == "Top Right";
+        }
     }
 
 

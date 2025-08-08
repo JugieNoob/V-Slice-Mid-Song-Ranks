@@ -74,34 +74,32 @@ class RankMod extends Module {
 
         background = new FlxSprite();
         background.makeGraphic(rank.width + padding, rank.height + padding, 0xFF000000);
-        background.setPosition(FlxG.width - background.width - 50, 0);
         background.alpha = 0.5;
         background.camera = PlayState.instance.camHUD;
         PlayState.instance.add(background);
-
         
         switch (FlxG.save.data.rankPos)
         {
-            // case "Top-Right":
-            //     rank.setPosition(FlxG.width - (rank.width + padding), padding);
-            // case "Top-Left":
-            //     rank.setPosition(padding, padding);
-            // case "Bottom-Right":
-            //     rank.setPosition(FlxG.width - (rank.width + padding), FlxG.height - (rank.height + padding));
-            // case "Bottom-Left":
-            //     rank.setPosition(padding, FlxG.height - (rank.height + padding));
-            // default:
-        }
+            case "Top Right":
+                background.setPosition(FlxG.width - background.width, 0);
+            case "Top Left":
+                background.setPosition(0, 0);
+            case "Bottom Right":
+                background.setPosition(FlxG.width - background.width, FlxG.height - background.height);
+            case "Bottom Left":
+                background.setPosition(0, FlxG.height - background.height);
+        }  
 
-        // rank.setPosition(FlxG.width - (rank.width + padding), padding);
 
+
+    
         updateRankPos();
 
      
-            if (FlxG.save.data.showbackground)
-            {
-                PlayState.instance.add(background);
-            }
+        if (FlxG.save.data.showbackground)
+        {
+            PlayState.instance.add(background);
+        }
             PlayState.instance.add(rank);
         
 
@@ -129,7 +127,7 @@ class RankMod extends Module {
 
     function updateRankPos()
     {
-        rank.setPosition(background.x + (background.width / 2) - (rank.width / 2), background.y + (background.height / 2) - (rank.height / 2));
+        rank.setPosition(background.x + (background.width / 2) - (rank.width / 2) + (padding / 8), background.y + (background.height / 2) - (rank.height / 2) + (padding / 2));
     }
 
 
@@ -139,9 +137,7 @@ class RankMod extends Module {
         var isPerfectGold = Highscore.tallies.sick == Highscore.tallies.totalNotesHit && Highscore.tallies.missed == 0;
         if (isPerfectGold)
         {
-            // rank.offset.set(0, 0);
             return "PERFECTGOLD";
-
         }
         
         // Else, use the standard grades
@@ -152,27 +148,22 @@ class RankMod extends Module {
         
         if (grade == Constants.RANK_PERFECT_THRESHOLD)
         {
-            // rank.offset.set(0, 0);
             return "PERFECT";
         }
         else if (grade >= Constants.RANK_EXCELLENT_THRESHOLD)
         {
-            // rank.offset.set(-7, 0);
             return "EXCELLENT";
         }
         else if (grade >= Constants.RANK_GREAT_THRESHOLD)
         {
-            // rank.offset.set(-4, 0);
             return "GREAT";
         }
         else if (grade >= Constants.RANK_GOOD_THRESHOLD)
         {
-            // rank.offset.set(-4, 0);
             return "GOOD";
         }
         else
         {
-            // rank.offset.set(-7, 0);
             return "SHIT";
         }
     }
