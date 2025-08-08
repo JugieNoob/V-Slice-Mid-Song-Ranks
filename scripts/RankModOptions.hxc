@@ -1,0 +1,67 @@
+import funkin.modding.module.Module;
+import funkin.ui.options.OptionsState;
+import flixel.FlxG;
+import Std;
+
+
+class RankModOptions extends Module {
+
+    var pagename = OptionsState.PageName;
+
+    function new (){
+        super("Rank Mod Options", 100);
+
+      
+        if (FlxG.save.data.showrank == null)
+        {
+            FlxG.save.data.showrank = true;
+        }
+        if (FlxG.save.data.showbackground == null)
+        {
+            FlxG.save.data.showbackground = true;
+        }
+        if (FlxG.save.data.rankbump == null)
+        {
+            FlxG.save.data.rankbump == true;
+        }
+
+        if (FlxG.save.data.rankpos == null)
+            {
+                FlxG.save.data.rankpos == "topright";
+            }
+    }
+
+
+    function onStateChangeEnd(event)
+    {
+        super.onStateChangeEnd(event);
+
+            if (Std.isOfType(event.targetState, OptionsState))
+                {
+          
+                        var preferences = event.targetState.optionsCodex.pages.get("preferences");
+        
+                        preferences.createPrefItemCheckbox('Show Mid-Song Ranks', 'Toggles the mid-song ranks.', function(value:Bool):Void {
+                            FlxG.save.data.showrank = value; }, FlxG.save.data.showrank);
+
+                        preferences.createPrefItemCheckbox('Bump Mid-Song Rank Icon', 'Toggles bumping the mid-song rank icon bumping when the rank changes.', function(value:Bool):Void {
+                            FlxG.save.data.rankbump = value; }, FlxG.save.data.rankbump);
+
+                        preferences.createPrefItemCheckbox('Show Mid-Song Ranks BG', 'Toggles a background for the mid-song ranks.', function(value:Bool):Void {
+                                FlxG.save.data.showbackground = value; }, FlxG.save.data.showbackground);
+                            
+                        preferences.createPrefItemEnum('Mid-Song Rank Pos', 'Set the position of the Mid-Song Rank. (Default is top-right)', ["Top-Right" => "Top-Right", "Top-Left" => "Top-Left", "Bottom-Right" => "Bottom-Right", "Bottom-Left" => "Bottom-Left"],function(value:Bool):Void {
+                            FlxG.save.data.rankpos = value;
+                        }, FlxG.save.data.rankpos);      
+            
+
+                    
+
+                }
+        
+      
+    }
+
+
+
+}

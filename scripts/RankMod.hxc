@@ -1,0 +1,216 @@
+import funkin.play.PlayState;
+import funkin.modding.module.Module;
+import funkin.graphics.FunkinSprite;
+import flixel.FlxG;
+import funkin.Highscore;
+import funkin.play.scoring.Scoring;
+import flixel.text.FlxText;
+import funkin.util.Constants;
+import flixel.FlxSprite;
+import flixel.tweens.FlxTween;
+
+class RankMod extends Module {
+
+    var debugtext:FlxText;
+    var rank:FunkinSprite;
+    var totalNotes = 0;
+    var padding = 10;
+    var previousrank = "";
+    
+
+    var background:FlxSprite;
+    var canadd = false;
+    
+    function new (){
+        super("Rank Mod");
+
+
+
+    }
+
+
+    override function onNoteHit(event)
+    {
+        super.onNoteHit(event);
+        if (PlayState.instance != null)
+            {
+                if (event.note.noteData.getMustHitNote())
+                {
+                    // debugtext.text = getRank();
+                    
+                    updateRankIcon();
+                    // rank.setPosition(FlxG.width - (rank.width + 10), 10);
+                    // debugtext.text = getRank();
+                }
+        
+            }
+
+    }
+
+    // override function onNoteIncoming(event)
+    // {
+    //     super.onNoteIncoming(event);
+    //     if (event.note.noteData.getMustHitNote())
+    //     {
+    //         totalNotes++;
+    //         debugtext.text = totalNotes;   
+    //     }
+    // }
+
+    override function onNoteMiss(event)
+        {
+            super.onNoteMiss(event);
+
+            updateRankIcon();
+            // rank.setPosition(FlxG.width - (rank.width + 10), 10);
+
+            // debugtext.text = getRank();
+
+        }
+
+    override function onGameOver(event)
+    {
+        super.onGameOver(event);
+        PlayState.instance.remove(rank);
+        PlayState.instance.remove(background);
+    }
+
+    override function onSongRetry(event)
+    {
+        super.onSongRetry(event);
+        PlayState.instance.remove(rank);
+        PlayState.instance.remove(background);
+    }
+
+
+    override function onSongLoaded(event)
+    {
+        super.onSongLoaded(event);
+
+
+        totalNotes = 0;
+        rank = new FunkinSprite(400, 200);
+        rank.loadSparrow("rankbadges");
+
+        rank.animation.addByPrefix("PERFECTGOLD", "PERFECT rank GOLD0005", 24, false);
+        rank.animation.addByPrefix("PERFECT", "PERFECT rank0005", 24, false);
+        rank.animation.addByPrefix("EXCELLENT", "EXCELLENT rank0005", 24, false);
+        rank.animation.addByPrefix("GREAT", "GREAT rank0005", 24, false);
+        rank.animation.addByPrefix("GOOD", "GOOD rank0005", 24, false);
+        rank.animation.addByPrefix("SHIT", "LOSS rank0005", 24, false);
+        rank.cameras = [PlayState.instance.camHUD];
+
+        switch (FlxG.save.data.rankpos)
+        {
+            case "Top-Right":
+                rank.setPosition(FlxG.width - (rank.width + padding), padding);
+            case "Top-Left":
+                rank.setPosition(padding, padding);
+            case "Bottom-Right":
+                rank.setPosition(FlxG.width - (rank.width + padding), FlxG.height - (rank.height + padding));
+            case "Bottom-Left":
+                rank.setPosition(padding, FlxG.height - (rank.height + padding));
+            default:
+                rank.setPosition(FlxG.width - (rank.width + padding), padding);
+
+
+        }
+
+
+        background = new FlxSprite(rank.x, rank.y - padding);
+        background.makeGraphic(rank.width + padding, rank.height + padding, 0xFF000000);
+        background.alpha = 0.5;
+        background.cameras = [PlayState.instance.camHUD];
+
+        
+
+        rank.animation.play(getRank(), true, false);
+        previousrank = getRank();
+
+        if (FlxG.save.data.showrank)
+        {
+            if (FlxG.save.data.showbackground)
+            {
+                PlayState.instance.add(background);
+            }
+            PlayState.instance.add(rank);
+        }
+
+        debugtext = new FlxText();
+        debugtext.text = "" + FlxG.save.data.rankpos;              
+        debugtext.cameras = [PlayState.instance.camHUD];
+        debugtext.size = 18;
+        debugtext.updateHitbox();
+        debugtext.setPosition(30, FlxG.height - debugtext.height - 10);
+        debugtext.zIndex = 1000;
+        // PlayState.instance.add(debugtext);
+
+    }
+
+    function updateRankIcon()
+    {
+        rank.animation.play(getRank(), true, false);
+
+        if (previousrank != getRank() && FlxG.save.data.rankbump && FlxG.save.data.showrank)
+        {
+            FlxTween.tween(rank.scale, {x: 1.25, y: 1.25}, 0.05, {
+                onComplete: function(){
+                    FlxTween.tween(rank.scale, {x: 1, y: 1}, 0.05);
+                }
+            });
+        }
+
+        previousrank = getRank();
+    }
+
+
+    function getRank()
+    {
+        // Adapted from FNF Source Code
+        var isPerfectGold = Highscore.tallies.sick ==  Highscore.tallies.totalNotesHit && Highscore.tallies.missed == 0;
+        if (isPerfectGold)
+        {
+            rank.offset.set(0, 0);
+            return "PERFECTGOLD";
+
+        }
+        
+        // Else, use the standard grades
+        
+        // Final Grade = (Sick + Good - Miss) / (Total Notes)
+        
+        var grade = (Highscore.tallies.sick + Highscore.tallies.good - Highscore.tallies.missed) /  Highscore.tallies.totalNotesHit;
+        
+        if (grade == Constants.RANK_PERFECT_THRESHOLD)
+        {
+            rank.offset.set(0, 0);
+            return "PERFECT";
+
+        }
+        else if (grade >= Constants.RANK_EXCELLENT_THRESHOLD)
+        {
+            rank.offset.set(-7, 0);
+            return "EXCELLENT";
+
+        }
+        else if (grade >= Constants.RANK_GREAT_THRESHOLD)
+        {
+            rank.offset.set(-4, 0);
+            return "GREAT";
+
+        }
+        else if (grade >= Constants.RANK_GOOD_THRESHOLD)
+        {
+            rank.offset.set(-4, 0);
+            return "GOOD";
+
+        }
+        else
+        {
+            rank.offset.set(-7, 0);
+            return "SHIT";
+
+        }
+    }
+
+}
