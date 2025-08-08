@@ -1,16 +1,14 @@
 import funkin.play.PlayState;
 import funkin.modding.module.Module;
-import funkin.graphics.FunkinSprite;
 import flixel.FlxG;
 import funkin.Highscore;
 import flixel.text.FlxText;
 import funkin.util.Constants;
 import flixel.FlxSprite;
-import flixel.tweens.FlxTween;
 
 class RankMod extends Module {
 
-    var rank:FunkinSprite;
+    var rank:RankSprite;
     var background:FlxSprite;
 
     var totalNotes:Int = 0;
@@ -55,15 +53,7 @@ class RankMod extends Module {
         
 
         totalNotes = 0;
-        rank = new FunkinSprite(400, 200);
-        rank.loadSparrow("rankbadges");
-
-        rank.animation.addByPrefix("PERFECTGOLD", "PERFECT rank GOLD0005", 24, false);
-        rank.animation.addByPrefix("PERFECT", "PERFECT rank0005", 24, false);
-        rank.animation.addByPrefix("EXCELLENT", "EXCELLENT rank0005", 24, false);
-        rank.animation.addByPrefix("GREAT", "GREAT rank0005", 24, false);
-        rank.animation.addByPrefix("GOOD", "GOOD rank0005", 24, false);
-        rank.animation.addByPrefix("SHIT", "LOSS rank0005", 24, false);
+        rank = new RankSprite();
         rank.camera = PlayState.instance.camHUD;
         rank.animation.play(getRank(), true, false);
         rank.updateHitbox();
@@ -113,39 +103,7 @@ class RankMod extends Module {
 
         if (previousRank != getRank())
         {
-            switch (FlxG.save.data.rankAnimation)
-            {
-                case "Bump":
-                    FlxTween.tween(rank.scale, {x: 1.25, y: 1.25}, 0.05, {
-                    onComplete: function(){
-                        FlxTween.tween(rank.scale, {x: 1, y: 1}, 0.05);
-                    }});
-                case "Shake":
-                    FlxTween.tween(rank, {x: rank.x - 5}, 0.05, {
-                    onComplete: function(){
-                        FlxTween.tween(rank, {x: rank.x + 10}, 0.025, {
-                        onComplete: function(){
-                            FlxTween.tween(rank, {x: rank.x - 5}, 0.05);
-                        }});
-                    }});
-                case "Jump":
-                    FlxTween.tween(rank, {y: rank.y - 5}, 0.05, {
-                    onComplete: function(){
-                        FlxTween.tween(rank, {y: rank.y + 5}, 0.025);
-                    }});
-                case "Tilt":
-                    FlxTween.tween(rank, {angle: rank.angle - 5}, 0.05, {
-                    onComplete: function(){
-                    FlxTween.tween(rank, {angle: rank.angle + 10}, 0.025, {
-                    onComplete: function(){
-                        FlxTween.tween(rank, {angle: rank.angle - 5}, 0.05);
-                        }});
-                    }});
-            
-            }
-          
-       
-            
+            rank.playRankAnimation();
         }
 
         previousRank = getRank();

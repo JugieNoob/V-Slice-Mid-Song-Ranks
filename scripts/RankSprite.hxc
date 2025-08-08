@@ -1,0 +1,57 @@
+import funkin.graphics.FunkinSprite;
+import flixel.FlxG;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxTimer;
+
+class RankSprite extends FunkinSprite {
+
+    function new(){
+        super(0,0);
+
+        loadSparrow("rankbadges");
+        animation.addByPrefix("PERFECTGOLD", "PERFECT rank GOLD0005", 24, false);
+        animation.addByPrefix("PERFECT", "PERFECT rank0005", 24, false);
+        animation.addByPrefix("EXCELLENT", "EXCELLENT rank0005", 24, false);
+        animation.addByPrefix("GREAT", "GREAT rank0005", 24, false);
+        animation.addByPrefix("GOOD", "GOOD rank0005", 24, false);
+        animation.addByPrefix("SHIT", "LOSS rank0005", 24, false);
+
+        animation.play("PERFECTGOLD");
+    }
+
+    public function playRankAnimation()
+    {
+        switch (FlxG.save.data.rankAnimation)
+            {
+                case "Bump":
+                    FlxTween.tween(scale, {x: 1.25, y: 1.25}, 0.05, {
+                    onComplete: function(){
+                        FlxTween.tween(scale, {x: 1, y: 1}, 0.05);
+                    }});
+                case "Shake":
+                    FlxTween.tween(rank, {x: rank.x - 5}, 0.05, {
+                    onComplete: function(){
+                        FlxTween.tween(rank, {x: rank.x + 10}, 0.025, {
+                        onComplete: function(){
+                            FlxTween.tween(rank, {x: rank.x - 5}, 0.05);
+                        }});
+                    }});
+                case "Jump":
+                    FlxTween.tween(rank, {y: rank.y - 5}, 0.05, {
+                    onComplete: function(){
+                        FlxTween.tween(rank, {y: rank.y + 5}, 0.025);
+                    }});
+                case "Tilt":
+                    FlxTween.tween(rank, {angle: rank.angle - 5}, 0.05, {
+                    onComplete: function(){
+                    FlxTween.tween(rank, {angle: rank.angle + 10}, 0.025, {
+                    onComplete: function(){
+                        FlxTween.tween(rank, {angle: rank.angle - 5}, 0.05);
+                        }});
+                    }});
+            
+            }
+    }
+
+
+}

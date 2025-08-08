@@ -5,23 +5,31 @@ import Std;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import funkin.ui.options.PreferencesMenu;
+import flixel.util.FlxTimer;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxTimer;
+
 
 
 class RankModOptions extends Module {
 
     var pagename = OptionsState.PageName;
-    var rank:FlxSprite;
+    var rank:RankSprite;
     var currentState;
 
     var text:FlxText;
 
     var items;
     var itemID:Int;
+       
+
+    var playingAnimation:Bool = false;
+    var timer:FlxTimer;
+
 
     function new (){
         super("Rank Mod Options", 100);
 
-      
         if (FlxG.save.data.showrank == null)
         {
             FlxG.save.data.showrank = true;
@@ -58,11 +66,12 @@ class RankModOptions extends Module {
                         text = new FlxText();
                         OptionsState.instance.add(text);
 
-                        rank = new FlxSprite();
-                        rank.makeGraphic(50, 50);
+                        rank = new RankSprite();
                         rank.visible = false;
                         rank.camera = preferences.menuCamera;
                         OptionsState.instance.add(rank);
+
+                        timer = new FlxTimer();
 
         
                         preferences.createPrefItemCheckbox('Show Mid Song Ranks', 'Toggles the mid-song Ranks.', function(value:Bool):Void {
@@ -97,15 +106,15 @@ class RankModOptions extends Module {
       
     }
 
-    function onUpdate(event)
+    override function onUpdate(event)
     {
         super.onUpdate(event);
         if (Std.isOfType(currentState, OptionsState))
         {
-            if (text != null)
-            {
-                text.text = Std.isOfType(currentState.optionsCodex.currentPage, PreferencesMenu);
-            }
+            // if (text != null)
+            // {
+            //     text.text = Std.isOfType(currentState.optionsCodex.currentPage, PreferencesMenu);
+            // }
             if (Std.isOfType(currentState.optionsCodex.currentPage, PreferencesMenu) && !rank.visible)
             {
                 rank.visible = true;
@@ -117,13 +126,26 @@ class RankModOptions extends Module {
 
             if (items.selectedIndex == itemID)
             {
-                text.text = "selected";
+             
+                if (!playingAnimation)
+                {
+                    playingAnimation = true;
+                    rank.playRankAnimation();
+                }
+                else if (playingAnimation && !timer.active)
+                {
+                    timer.start(1, function(){
+                        playingAnimation = false;    
+                    });
+                        
+                }
+
+                text.text = "selected " + playingAnimation;
+
             }
             
         }
      
     }
-
-
 
 }
