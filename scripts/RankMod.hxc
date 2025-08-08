@@ -27,12 +27,16 @@ class RankMod extends Module {
     override function onNoteHit(event)
     {
         super.onNoteHit(event);
+        if (!FlxG.save.data.showrank) return;
+
         if (PlayState.instance != null)
             {
                 if (event.note.noteData.getMustHitNote())
                 {
                     totalNotes++;
                     updateRankIcon();
+                    debugtext.text = "Total Notes: " + totalNotes + "\n" + Highscore.tallies.totalNotesHit;
+
                 }
         
             }
@@ -42,6 +46,7 @@ class RankMod extends Module {
     override function onNoteMiss(event)
     {
         super.onNoteMiss(event);
+        if (!FlxG.save.data.showrank) return;
         totalNotes++;
         updateRankIcon();
     }
@@ -49,7 +54,8 @@ class RankMod extends Module {
     override function onCountdownStart(event)
     {
         super.onCountdownStart(event);
-
+        if (!FlxG.save.data.showrank) return;
+        
 
         totalNotes = 0;
         totalNotesHit = 0;
@@ -89,14 +95,13 @@ class RankMod extends Module {
         rank.animation.play(getRank(), true, false);
         previousrank = getRank();
 
-        if (FlxG.save.data.showrank)
-        {
+     
             if (FlxG.save.data.showbackground)
             {
                 PlayState.instance.add(background);
             }
             PlayState.instance.add(rank);
-        }
+        
 
         debugtext = new FlxText();
         debugtext.text = "" + FlxG.save.data.rankpos;              
@@ -141,7 +146,7 @@ class RankMod extends Module {
         
         // Final Grade = (Sick + Good - Miss) / (Total Notes)
         
-        var grade = (Highscore.tallies.sick + Highscore.tallies.good - Highscore.tallies.missed) / totalNotes;
+        var grade = (Highscore.tallies.sick + Highscore.tallies.good - Highscore.tallies.missed) / (totalNotes - 1);
         
         if (grade == Constants.RANK_PERFECT_THRESHOLD)
         {
