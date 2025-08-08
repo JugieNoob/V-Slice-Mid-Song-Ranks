@@ -3,7 +3,6 @@ import funkin.modding.module.Module;
 import funkin.graphics.FunkinSprite;
 import flixel.FlxG;
 import funkin.Highscore;
-import funkin.play.scoring.Scoring;
 import flixel.text.FlxText;
 import funkin.util.Constants;
 import flixel.FlxSprite;
@@ -13,13 +12,15 @@ class RankMod extends Module {
 
     var debugtext:FlxText;
     var rank:FunkinSprite;
-    var totalNotes = 0;
     var padding = 10;
     var previousrank = "";
     
 
     var background:FlxSprite;
     var canadd = false;
+
+    var totalNotes:Int = 0;
+    var totalNotesHit:Int = 0;
     
     function new (){
         super("Rank Mod");
@@ -37,8 +38,12 @@ class RankMod extends Module {
                 if (event.note.noteData.getMustHitNote())
                 {
                     // debugtext.text = getRank();
+                    totalNotes++;
+                    totalNotesHit++;
                     
+                    debugtext.text = "Total Notes: " + totalNotes + "\nTotal Notes Hit: " + totalNotesHit + "\n" + Highscore.tallies.totalNotes + "\n" + Highscore.tallies.totalNotesHit;
                     updateRankIcon();
+
                     // rank.setPosition(FlxG.width - (rank.width + 10), 10);
                     // debugtext.text = getRank();
                 }
@@ -47,21 +52,14 @@ class RankMod extends Module {
 
     }
 
-    // override function onNoteIncoming(event)
-    // {
-    //     super.onNoteIncoming(event);
-    //     if (event.note.noteData.getMustHitNote())
-    //     {
-    //         totalNotes++;
-    //         debugtext.text = totalNotes;   
-    //     }
-    // }
-
     override function onNoteMiss(event)
         {
             super.onNoteMiss(event);
 
+            totalNotes++;
+            debugtext.text = "Total Notes: " + totalNotes + "\nTotal Notes Hit: " + totalNotesHit + "\n" + Highscore.tallies.totalNotes + "\n" + Highscore.tallies.totalNotesHit;
             updateRankIcon();
+
             // rank.setPosition(FlxG.width - (rank.width + 10), 10);
 
             // debugtext.text = getRank();
@@ -83,12 +81,13 @@ class RankMod extends Module {
     }
 
 
-    override function onSongLoaded(event)
+    override function onCountdownStart(event)
     {
-        super.onSongLoaded(event);
+        super.onCountdownStart(event);
 
 
         totalNotes = 0;
+        totalNotesHit = 0;
         rank = new FunkinSprite(400, 200);
         rank.loadSparrow("rankbadges");
 
@@ -138,12 +137,12 @@ class RankMod extends Module {
 
         debugtext = new FlxText();
         debugtext.text = "" + FlxG.save.data.rankpos;              
-        debugtext.cameras = [PlayState.instance.camHUD];
+        debugtext.camera = PlayState.instance.camHUD;
         debugtext.size = 18;
         debugtext.updateHitbox();
-        debugtext.setPosition(30, FlxG.height - debugtext.height - 10);
+        debugtext.setPosition(30, FlxG.height - debugtext.height - 70);
         debugtext.zIndex = 1000;
-        // PlayState.instance.add(debugtext);
+        PlayState.instance.add(debugtext);
 
     }
 
@@ -185,31 +184,26 @@ class RankMod extends Module {
         {
             rank.offset.set(0, 0);
             return "PERFECT";
-
         }
         else if (grade >= Constants.RANK_EXCELLENT_THRESHOLD)
         {
             rank.offset.set(-7, 0);
             return "EXCELLENT";
-
         }
         else if (grade >= Constants.RANK_GREAT_THRESHOLD)
         {
             rank.offset.set(-4, 0);
             return "GREAT";
-
         }
         else if (grade >= Constants.RANK_GOOD_THRESHOLD)
         {
             rank.offset.set(-4, 0);
             return "GOOD";
-
         }
         else
         {
             rank.offset.set(-7, 0);
             return "SHIT";
-
         }
     }
 
