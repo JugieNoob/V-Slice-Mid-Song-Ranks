@@ -20,14 +20,16 @@ class RankModOptions extends Module {
         {
             FlxG.save.data.backgroundAlpha = 50;
         }
-        if (FlxG.save.data.rankbump == null)
-        {
-            FlxG.save.data.rankbump == true;
-        }
+
 
         if (FlxG.save.data.rankPos == null)
         {
             FlxG.save.data.rankPos == "Top Right";
+        }
+
+        if (FlxG.save.data.rankAnimation == null)
+        {
+            FlxG.save.data.rankAnimation = "Bump";
         }
     }
 
@@ -44,8 +46,9 @@ class RankModOptions extends Module {
                         preferences.createPrefItemCheckbox('Show Mid Song Ranks', 'Toggles the mid-song Ranks.', function(value:Bool):Void {
                             FlxG.save.data.showrank = value; }, FlxG.save.data.showrank);
 
-                        preferences.createPrefItemCheckbox('Bump Rank Icon', 'Toggles bumping the mid-song rank icon bumping when the rank changes.', function(value:Bool):Void {
-                            FlxG.save.data.rankbump = value; }, FlxG.save.data.rankbump);
+                        preferences.createPrefItemEnum('Rank Icon Animation', 'Set which animation should play when a rank changes', ["None" => "None", "Bump" => "Bump", "Shake" => "Shake", "Jump" => "Jump", "Tilt" => "Tilt",],function(value:Bool):Void {
+                            FlxG.save.data.rankAnimation = value;
+                        }, FlxG.save.data.rankAnimation);      
 
                         preferences.createPrefItemPercentage('Rank Background Opacity', "Change the opacity of the Rank Background", function(value:Int){
                             FlxG.save.data.backgroundAlpha = value;
@@ -56,8 +59,7 @@ class RankModOptions extends Module {
                         }, FlxG.save.data.rankPos);      
             
 
-                    
-
+                
                 }
         
       

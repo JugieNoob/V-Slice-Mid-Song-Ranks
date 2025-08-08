@@ -109,13 +109,43 @@ class RankMod extends Module {
         rank.updateHitbox();
         updateRankPos();
 
-        if (previousRank != getRank() && FlxG.save.data.rankbump && FlxG.save.data.showrank)
+        if (FlxG.save.data.rankAnimation == "None") return;
+
+        if (previousRank != getRank())
         {
-            FlxTween.tween(rank.scale, {x: 1.25, y: 1.25}, 0.05, {
-                onComplete: function(){
-                    FlxTween.tween(rank.scale, {x: 1, y: 1}, 0.05);
-                }
-            });
+            switch (FlxG.save.data.rankAnimation)
+            {
+                case "Bump":
+                    FlxTween.tween(rank.scale, {x: 1.25, y: 1.25}, 0.05, {
+                    onComplete: function(){
+                        FlxTween.tween(rank.scale, {x: 1, y: 1}, 0.05);
+                    }});
+                case "Shake":
+                    FlxTween.tween(rank, {x: rank.x - 5}, 0.05, {
+                    onComplete: function(){
+                        FlxTween.tween(rank, {x: rank.x + 10}, 0.025, {
+                        onComplete: function(){
+                            FlxTween.tween(rank, {x: rank.x - 5}, 0.05);
+                        }});
+                    }});
+                case "Jump":
+                    FlxTween.tween(rank, {y: rank.y - 5}, 0.05, {
+                    onComplete: function(){
+                        FlxTween.tween(rank, {y: rank.y + 5}, 0.025);
+                    }});
+                case "Tilt":
+                    FlxTween.tween(rank, {angle: rank.angle - 5}, 0.05, {
+                    onComplete: function(){
+                    FlxTween.tween(rank, {angle: rank.angle + 10}, 0.025, {
+                    onComplete: function(){
+                        FlxTween.tween(rank, {angle: rank.angle - 5}, 0.05);
+                        }});
+                    }});
+            
+            }
+          
+       
+            
         }
 
         previousRank = getRank();
